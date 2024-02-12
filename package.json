@@ -1,0 +1,20 @@
+{
+  "name": "pm2-alt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.3",
+    "commander": "^11.1.0",
+    "pidusage": "^3.0.2",
+    "pm2-axon": "^4.0.1",
+    "pm2-axon-rpc": "^0.7.1"
+  }
+}
