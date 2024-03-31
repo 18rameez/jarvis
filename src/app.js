@@ -63,7 +63,6 @@ program.command('list')
         .action(() => {
             console.log('get list')
             client.call('list', null, function(err, res) {
-                // console.log(JSON.stringify(res))
                 displayProcessList(res)
                 process.exit()
             })
