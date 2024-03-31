@@ -20,7 +20,9 @@ server.expose({
   prepare: jarvis.processManager.createProcess,
   monitor: jarvis.processManager.monitor,
   list: jarvis.processManager.getList,
-  kill: jarvis.processManager.kill
+  kill: jarvis.processManager.kill,
+  stop : jarvis.jarvisHandler.stop, // To stop this daemon
+
 });
 
 function killChildProcess() {
@@ -34,6 +36,11 @@ function killChildProcess() {
 
 process.on("exit", () => {
   console.log('exit')
+  killChildProcess();
+});
+
+process.on("error", (error) => {
+  console.log('An error occurred:', error);
   killChildProcess();
 });
 

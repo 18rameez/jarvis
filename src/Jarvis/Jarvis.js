@@ -1,6 +1,6 @@
 
 const ProcessManager = require('./ProcessManager.js')
-
+const JarvisHandler = require('./JarvisHandler.js')
 
 
 
@@ -15,6 +15,7 @@ class Jarvis {
         this.Home_Directory = './'
         this.Logs_Directory = 'logs'
         this.processManager = new ProcessManager(this);
+        this.jarvisHandler = new JarvisHandler(this);
     }
 
 }
