@@ -13,22 +13,23 @@ const server = new rpc.Server(rep);
 const bindRes = rep.bind(port);
 
 bindRes.once("bind", function () {
-  console.log("push server started");
+  console.log("Daemon server has been started");
 });
 
 server.expose({
   prepare: jarvis.processManager.createProcess,
   monitor: jarvis.processManager.monitor,
-  list: jarvis.processManager.getList,
+  ping: jarvis.processManager.ping,
   kill: jarvis.processManager.kill,
-  stop : jarvis.jarvisHandler.stop, // To stop this daemon
+  stop : jarvis.jarvisHandler.stop,
+  list: jarvis.processManager.getList,
+
 
 });
 
 function killChildProcess() {
   for (const [key, value] of Object.entries(jarvis.processes)) {
     if (value.instance) {
-      console.log("Killing child process");
       value.instance.kill();
     }
   }

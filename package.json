@@ -2,9 +2,12 @@
   "name": "pm2-alt",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/app.js",
+  "bin": {
+    "app-name": "src/app.js"
+  },  
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "pkg . --output src/jarvis_exec"
   },
   "keywords": [],
   "author": "",
