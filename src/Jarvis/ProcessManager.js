@@ -6,7 +6,6 @@ const getProcessUsage = require("../utils/getProcessUsage");
 
 class ProcessManager {
   constructor(jarvis) {
-    console.log("ProcessManager constructor");
     this.jarvis = jarvis;
     this.childProcess = null;
     //this.createProcess = this.createProcess.bind(this);
@@ -60,7 +59,7 @@ class ProcessManager {
 
     this.handleChildProcessEvents(pid, fileName, fn);
 
-    console.log("createProcess", pid, fileName, this.jarvis.processes);
+    // console.log("createProcess", pid, fileName, this.jarvis.processes);
   };
 
   processExistCheck(pathToCheck) {
@@ -82,8 +81,7 @@ class ProcessManager {
   monitor(data, fn) {
     const file = fs.readFileSync("./logs/pid.txt", "utf8");
     const pids = file.split("\n");
-    console.log(pids);
-    fn(null, "monitor started");
+    fn(null, "Monitoring started");
   }
 
   handleExit(pid) {
@@ -136,8 +134,8 @@ class ProcessManager {
    
     this.childProcess.on('spawn', () => {
       if (fn) {
-        fn(null, 'process started');
-        console.log('Child process has started successfully.');
+        fn(null, 'process has been started');
+        console.log('process has been started successfully. PID: ', pid);
         //To store all processes ids
         fs.appendFileSync('./logs/pid.txt', `${this.childProcess.pid}\n`);
       }
@@ -163,13 +161,15 @@ class ProcessManager {
 
 
   getList = (data, fn) => {
-    console.log(this?.jarvis?.processes);
     const processData = this?.jarvis?.processes || null;
     fn(null, processData);
   };
 
+  ping = (data, fn) => {
+    fn(null, true);
+  };
+
   kill = (data, fn) => {
-    console.log(data);
     const killProcess = this.jarvis.processes[data.pid];
     console.log("kill:", killProcess);
 
@@ -178,7 +178,7 @@ class ProcessManager {
       delete this.jarvis.processes[data.pid];
     }
 
-    fn(null, `PID:${data.pid} has been killed`);
+    fn(null, `PID: ${data.pid} has been killed`);
   };
 }
 

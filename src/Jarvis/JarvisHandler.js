@@ -12,8 +12,8 @@ class JarvisHandler {
     }
 
     stop(data, fn){
-        console.log("stop executed")
-        fn(null, "daemon stopped");
+        console.log("Daemon server has been stopped")
+        fn(null, "Daemon server has been stopped");
         process.exit(1)
     }
 }
