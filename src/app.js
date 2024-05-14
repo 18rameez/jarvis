@@ -137,7 +137,7 @@ program.parse()
 
 function lanuchDaemon(callback){
 
-    const logDirectory = path.join(process.cwd(), 'Jarvis', 'logs');
+    const logDirectory = path.join(__dirname, 'Jarvis', 'logs');
     ensureDirectoryExists(logDirectory); 
 
 
@@ -152,7 +152,7 @@ function lanuchDaemon(callback){
 
     var child = require('child_process').spawn('node', node_args, {
         detached   : true,
-        cwd        :  process.cwd(),
+        cwd        :  __dirname,
         windowsHide: true,
         // env        : Object.assign({
         //   'SILENT'    : that.conf.DEBUG ? !that.conf.DEBUG : true,
