@@ -1,7 +1,7 @@
 const axon = require("pm2-axon");
 const rep = axon.socket("rep");
 const rpc = require("pm2-axon-rpc");
-const app_config = require("./config/app_config.js");
+const app_config = require("./config/app_config.json");
 
 const Jarvis = require("./Jarvis/Jarvis.js");
 
