@@ -1,4 +1,5 @@
 /node_modules
-/src/Jarvis/logs
+/src/Jarvis
 /src/logs
 /src/jarvis_exec
+.vscode/

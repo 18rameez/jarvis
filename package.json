@@ -7,7 +7,10 @@
     "jarvis": "./bin/jarvis.js"
   },
   "scripts": {
-    "build": "pkg . --output src/jarvis_exec"
+    "build": "pkg . --output src/jarvis_exec",
+    "start" : "node ./src/app.js start ./src/test_program/program1.js",
+    "stop" : "node ./src/app.js stop"
+
   },
   "keywords": [],
   "author": "",

@@ -3,7 +3,7 @@ const { spawn } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 const getProcessUsage = require("../utils/getProcessUsage");
-
+const {ensureFileAndDirExistence} = require("../utils/fileUtils")
 class ProcessManager {
   constructor(jarvis) {
     this.jarvis = jarvis;
@@ -25,19 +25,12 @@ class ProcessManager {
     const fileName = path.basename(data.fileName);
     const formattedFileName = fileName.split(".")[0];
 
-    const out = path.join(
-      __dirname,
-      `${this.jarvis.Home_Directory}${
-        this.jarvis.Logs_Directory
-      }/${formattedFileName}-${"out"}.logs`
-    );
+    const out = path.join(this.jarvis.Home_Directory,this.jarvis.Logs_Directory,`${formattedFileName}-${"out"}.logs`);
+    const err = path.join(this.jarvis.Home_Directory, this.jarvis.Logs_Directory, `${formattedFileName}-${"err"}.logs`);
 
-    const err = path.join(
-      __dirname,
-      `${this.jarvis.Home_Directory}${
-        this.jarvis.Logs_Directory
-      }/${formattedFileName}-${"err"}.logs`
-    );
+
+    ensureFileAndDirExistence(out)
+    ensureFileAndDirExistence(err)
 
     const outFd = fs.openSync(out, "a");
     const errFd = fs.openSync(err, "a");
@@ -137,7 +130,9 @@ class ProcessManager {
         fn(null, 'process has been started');
         console.log('process has been started successfully. PID: ', pid);
         //To store all processes ids
-        fs.appendFileSync('./logs/pid.txt', `${this.childProcess.pid}\n`);
+        const filePath = path.join(this.jarvis.Home_Directory, this.jarvis.pids_directory, 'pids.txt') 
+        ensureFileAndDirExistence(filePath)
+        fs.appendFileSync(filePath, `${this.childProcess.pid}\n`);
       }
     });
   
