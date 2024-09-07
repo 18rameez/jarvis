@@ -2,7 +2,7 @@ const axon = require('pm2-axon');
 const req = axon.socket('req');
 const rpc = require('pm2-axon-rpc')
 const path = require('path')
-const app_config = require('./config/app_config.json')
+const app_config = require('./config/app_config.js')
 const {Command} = require('commander');
 const program = new Command();
 const {displayProcessList} = require('./utils/terminalUtils.js')
@@ -137,9 +137,11 @@ program.parse()
 
 function lanuchDaemon(callback){
 
-    const logDirectory = path.join(__dirname, 'Jarvis', 'logs');
+    const logDirectory = path.join(app_config.homeDirectory, 'jarvis-log');
     ensureDirectoryExists(logDirectory); 
 
+
+    console.log(logDirectory);
 
     const node_args = ["./daemon.js"]
 
