@@ -4,17 +4,17 @@
 2. Run the `jarvis_exec` file using the following commands:
    - To start a process:
      ```
-     ./jarvis_exec start <program-file-path>
+     ./bin/jarvis  start <program-file-path>
      ```
    - To stop Jarvis and all currently running processes:
      ```
-     ./jarvis_exec stop
+     ./bin/jarvis  stop
      ```
    - To kill a process using its process ID:
      ```
-     ./jarvis_exec stop <pid>
+     ./bin/jarvis  stop <pid>
      ```
    - To list all running processes:
      ```
-     ./jarvis_exec list
+     ./bin/jarvis  list
      ```
