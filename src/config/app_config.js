@@ -2,7 +2,7 @@ const os = require('os');
 
 // Configuration object
 const config = {
-    port: 8010,
+    port: 8040,
     homeDirectory: `${os.homedir()}/jarvis`,
     logsDirectory: 'logs',
     pidsDirectory: 'pids'

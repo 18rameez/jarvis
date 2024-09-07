@@ -1,6 +1,3 @@
-const axon = require('pm2-axon');
-const req = axon.socket('req');
-const rpc = require('pm2-axon-rpc')
 const path = require('path')
 const app_config = require('./config/app_config.js')
 const {Command} = require('commander');
@@ -8,70 +5,30 @@ const program = new Command();
 const {displayProcessList} = require('./utils/terminalUtils.js')
 const fs = require('fs')
 const {ensureDirectoryExists} = require("./utils/fileUtils.js")
+const { client, ensureDaemonIsRunning } = require('./client/rpcClient.js'); 
 
 
-const client = new rpc.Client(req)
-const { port } = app_config
-req.connect(port);
 
-
-// client.sock.once('reconnect attempt', function() {
-//     client.sock.close();
-//     console.log('Daemon not launched');
-//     lanuchDaemon(() => {});
-//     process.nextTick(function() {
-//         console.log("here")
-//     });
-// });
-
-
-function ensureDaemonIsRunning(callback) {
-    lanuchDaemon(() => {});
-    client.call('ping', null, function(err, isRunning) {
-        if (err || !isRunning) {
-            console.log('Daemon not launched. Starting daemon...');
-            lanuchDaemon(() => {
-                console.log('Daemon started. Retrying command...');
-                callback();
-            });
-        } else {
-            callback();
-        }
-    });
+// Wrapper to ensure the daemon is running before executing a command
+function withDaemonCheck(action) {
+    return function(...args) {
+        ensureDaemonIsRunning(launchDaemon, () => {
+            action(...args);
+        });
+    };
 }
-
-
-
-// client.methods(function(err, methods){
-//     console.log(methods)
-// })
 
 
 program.command('start <fileName>')
     .description('prepare a process')
-    .action((fileName) => {
-
-        // console.log(fileName)
-        // const filePath = path.resolve(fileName)
-        // const data = {
-        //     fileName: filePath
-        // }
-        
-        // client.call('prepare', data, function(err, res) {
-        //     console.log(res)
-        //     process.exit()
-        // })
-
-        ensureDaemonIsRunning(() => {
-            const filePath = path.resolve(fileName);
-            const data = { fileName: filePath };
-            client.call('prepare', data, function(err, res) {
-                console.log(res);
-                process.exit();
-            });
+    .action(withDaemonCheck((fileName) => {
+        const filePath = path.resolve(fileName);
+        const data = { fileName: filePath };
+        client.call('prepare', data, function(err, res) {
+            console.log(res);
+            process.exit();
         });
-        
-    })
+    }));
 
 program.command('monitor')
         .description('monitor a process')
@@ -84,13 +41,12 @@ program.command('monitor')
 
 program.command('list')
         .description('get list of running processes')
-        .action(() => {
-            console.log('get list')
+        .action(withDaemonCheck(() => {
             client.call('list', null, function(err, res) {
-                displayProcessList(res)
-                process.exit()
-            })
-        })
+                displayProcessList(res);
+                process.exit();
+            });
+        }));
 
 program.command('stop')
         .description('stop jarvis daemon')
@@ -135,13 +91,12 @@ program.parse()
 
 
 
-function lanuchDaemon(callback){
+function launchDaemon(callback){
+
 
     const logDirectory = path.join(app_config.homeDirectory, 'jarvis-log');
     ensureDirectoryExists(logDirectory); 
 
-
-    console.log(logDirectory);
 
     const node_args = ["./daemon.js"]
 
