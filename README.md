@@ -1,7 +1,6 @@
 ### How to use Jarvis
 
-1. Execute the command `npm run build` to build the `jarvis_exec` file.
-2. Run the `jarvis_exec` file using the following commands:
+1. Run the `./bin/jarvis` file using the following commands:
    - To start a process:
      ```
      ./bin/jarvis  start <program-file-path>
