@@ -1,6 +1,7 @@
 const CLIManager = require('./client/commandManager')
+const JarvisClient = require('./client/Client');
 
-CLIManager.run();
+const jarvisClient = new JarvisClient();
+const cliManager = new CLIManager(jarvisClient);
 
-
-
+cliManager.run();

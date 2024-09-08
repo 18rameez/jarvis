@@ -6,9 +6,9 @@ const JarvisHandler = require('../Jarvis/JarvisHandler');
 
 class CLIManager {
 
-  constructor() {
+  constructor(client) {
     this.program = new Command();
-    this.jarvisClient = new JarvisClient(); // Instantiate the client
+    this.jarvisClient = client
     this.setupCommands();
   }
 
@@ -129,4 +129,4 @@ class CLIManager {
   }
 }
 
-module.exports = new CLIManager();
+module.exports =  CLIManager
