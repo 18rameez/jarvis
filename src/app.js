@@ -1,6 +1,6 @@
-const {program} = require('./client/commandManager')
+const CLIManager = require('./client/commandManager')
 
+CLIManager.run();
 
-program.parse()
 
 
