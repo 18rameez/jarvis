@@ -97,8 +97,8 @@ function launchDaemon(callback){
     const logDirectory = path.join(app_config.homeDirectory, 'jarvis-log');
     ensureDirectoryExists(logDirectory); 
 
-
-    const node_args = ["./daemon.js"]
+    // daemon file path which is located is the jarvis folder
+    const node_args = ["./Jarvis/daemon.js"]
 
     const outPath = path.join(logDirectory, 'daemon-out-log.txt');
     const errPath = path.join(logDirectory, 'daemon-err-log.txt');
