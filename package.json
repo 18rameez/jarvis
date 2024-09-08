@@ -8,9 +8,10 @@
   },
   "scripts": {
     "build": "pkg . --output src/jarvis_exec",
-    "start" : "./bin/jarvis start ./test/test_program/program1.js",
-    "stop" : "./bin/jarvis  stop"
-
+    "start": "./bin/jarvis start ./test/test_program/program1.js",
+    "stop": "./bin/jarvis  stop",
+    "list": "./bin/jarvis  list",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -22,5 +23,8 @@
     "pidusage": "^3.0.2",
     "pm2-axon": "^4.0.1",
     "pm2-axon-rpc": "^0.7.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
