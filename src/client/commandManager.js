@@ -98,6 +98,17 @@ class CLIManager {
           });
         });
       });
+
+    this.program
+        .command('logs [id|name]')
+        .option('--lines <n>', 'output the last N lines, instead of the last 15 by default')
+        .option('--out', 'only shows standard output')
+        .option('--err', 'only shows error output')
+        .action((id, cmd) => {
+          this.jarvisClient.logManager.getProcessLogs(id, cmd);
+          process.exit();
+        })
+
   }
 
   run() {

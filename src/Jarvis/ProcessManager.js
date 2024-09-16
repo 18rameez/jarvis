@@ -9,6 +9,7 @@ class ProcessManager {
     this.jarvis = jarvis;
     this.childProcess = null;
     //this.createProcess = this.createProcess.bind(this);
+    this.processCounter = 0
   }
 
   createProcess = (data, fn) => {
@@ -41,7 +42,10 @@ class ProcessManager {
     });
 
     const pid = this.childProcess.pid;
+    const id = this.processCounter++;
+
     this.jarvis.processes[pid] = {
+      id: id,
       pid: pid,
       fileName: fileName,
       instance: this.childProcess,

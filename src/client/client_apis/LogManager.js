@@ -12,8 +12,9 @@ class LogManager {
     }
 
 
-    getLogById(){
-
+    getProcessLogs(id,cmd){
+        console.log(id);
+        console.log(cmd);
     }
 }
 

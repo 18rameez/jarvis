@@ -10,12 +10,13 @@ exports.displayProcessList = (data) => {
     }
 
     const table = new Table({
-        head: [chalk.green('PID'), chalk.blue('Process Name'), chalk.yellow('uptime'), chalk.cyan('status')],
-        colWidths: [10, 20, 40, 20] // Adjust column widths as needed
+        head: [chalk.green('ID'),chalk.green('PID'), chalk.blue('Process Name'), chalk.yellow('uptime'), chalk.cyan('status')],
+        colWidths: [10, 10, 20, 40, 20] // Adjust column widths as needed
     });
 
     Object.entries(data).forEach(([key, value]) => {
         table.push([
+            value.id,
             value.pid,
             value.fileName,
             calculateUptime(value.startTime),
