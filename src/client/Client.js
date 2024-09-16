@@ -1,14 +1,23 @@
 const axon = require('pm2-axon');
 const rpc = require('pm2-axon-rpc');
 const app_config = require('../config/app_config');
+const LogManager = require('./client_apis/LogManager')
+const ProcessManager = require('./client_apis/ProcessManager')
+
 
 class Client {
 
   constructor() {
+
+    this.logManager = new LogManager(this);
+    this.processManager = new ProcessManager(this);
+
+
     const req = axon.socket('req');
     this.client = new rpc.Client(req);
     const { port } = app_config;
     req.connect(port);
+
   }
 
   /**
@@ -41,6 +50,14 @@ class Client {
     } catch (error) {
       console.error('Error occurred while pinging daemon:', error);
     }
+  }
+
+  call(command, data, callback) {
+    this.client.call(command, data, callback);
+  }
+
+  loadModules(){
+
   }
 }
 

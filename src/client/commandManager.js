@@ -29,16 +29,7 @@ class CLIManager {
       .description('Prepare a process')
       .action(
         this.withDaemonCheck((fileName) => {
-          const filePath = path.resolve(fileName);
-          const data = { fileName: filePath };
-          this.jarvisClient.client.call('prepare', data, (err, res) => {
-            if (err) {
-              console.error('Error preparing process:', err);
-              process.exit(1);
-            }
-            console.log(res);
-            process.exit();
-          });
+            this.jarvisClient.processManager.startProcess(fileName);
         })
       );
 
@@ -46,7 +37,7 @@ class CLIManager {
       .command('monitor')
       .description('Monitor a process')
       .action(() => {
-        this.jarvisClient.client.call('monitor', null, (err, res) => {
+        this.jarvisClient.call('monitor', null, (err, res) => {
           if (err) {
             console.error('Error monitoring process:', err);
             process.exit(1);
@@ -60,14 +51,7 @@ class CLIManager {
       .description('Get list of running processes')
       .action(
         this.withDaemonCheck(() => {
-          this.jarvisClient.client.call('list', null, (err, res) => {
-            if (err) {
-              console.error('Error listing processes:', err);
-              process.exit(1);
-            }
-            displayProcessList(res);
-            process.exit();
-          });
+          this.jarvisClient.processManager.listProcess();
         })
       );
 
@@ -75,15 +59,7 @@ class CLIManager {
       .command('stop')
       .description('Stop jarvis daemon')
       .action(() => {
-        console.log('stop daemon');
-        this.jarvisClient.client.call('stop', null, (err, res) => {
-          if (err) {
-            console.error('Error stopping daemon:', err);
-            process.exit(1);
-          }
-          console.log(res);
-          process.exit();
-        });
+        this.jarvisClient.processManager.stopDaemon()
       });
 
     this.program
@@ -91,7 +67,7 @@ class CLIManager {
       .description('Ping jarvis daemon')
       .action(() => {
         console.log('ping exec');
-        this.jarvisClient.client.call('ping', null, (err, res) => {
+        this.jarvisClient.call('ping', null, (err, res) => {
           if (err) {
             console.error('Error pinging daemon:', err);
             process.exit(1);
@@ -106,13 +82,13 @@ class CLIManager {
       .action((pid) => {
         console.log(`Killing process with PID: ${pid}`);
         const data = { pid };
-        this.jarvisClient.client.call('kill', data, (err, res) => {
+        this.jarvisClient.call('kill', data, (err, res) => {
           if (err) {
             console.error('Error killing process:', err);
             process.exit(1);
           }
           console.log(res);
-          this.jarvisClient.client.call('list', null, (err, res) => {
+          this.jarvisClient.call('list', null, (err, res) => {
             if (err) {
               console.error('Error listing processes after kill:', err);
               process.exit(1);
