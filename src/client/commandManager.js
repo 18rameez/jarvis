@@ -104,10 +104,9 @@ class CLIManager {
         .option('--lines <n>', 'output the last N lines, instead of the last 15 by default')
         .option('--out', 'only shows standard output')
         .option('--err', 'only shows error output')
-        .action((id, cmd) => {
+        .action(this.withDaemonCheck((id,cmd) => {
           this.jarvisClient.logManager.getProcessLogs(id, cmd);
-          process.exit();
-        })
+        }))
 
   }
 

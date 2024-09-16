@@ -157,7 +157,28 @@ class ProcessManager {
   }
   
 
+  getProcessLog = (data, fn) => {
+     let id = data?.id;
+     if(id){
+      id = parseInt(id)
+      const processData = this.findProcessById(id)
+      fn(null, processData)
+     } 
+  }
 
+  findProcessById(id) {
+    // Get all process objects in an array and find the one with the matching id
+    const process = Object.values(this.jarvis.processes).find((process) => process.id === id);
+  
+    if (process) {
+      console.log("Process found:", process);
+      return process;
+    } else {
+      console.log("No process found with the given id:", id);
+      return null;
+    }
+  }
+  
 
   getList = (data, fn) => {
     const processData = this?.jarvis?.processes || null;

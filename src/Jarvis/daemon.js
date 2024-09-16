@@ -23,8 +23,7 @@ server.expose({
   kill: jarvis.processManager.kill,
   stop : jarvis.jarvisHandler.stop,
   list: jarvis.processManager.getList,
-
-
+  getProcessLog: jarvis.processManager.getProcessLog
 });
 
 function killChildProcess() {
