@@ -11,6 +11,7 @@
     "start": "./bin/jarvis start ./test/test_program/program1.js",
     "stop": "./bin/jarvis  stop",
     "list": "./bin/jarvis  list",
+    "logs": "./bin/jarvis logs 0",
     "test": "jest"
   },
   "keywords": [],
@@ -22,7 +23,9 @@
     "commander": "^11.1.0",
     "pidusage": "^3.0.2",
     "pm2-axon": "^4.0.1",
-    "pm2-axon-rpc": "^0.7.1"
+    "pm2-axon-rpc": "^0.7.1",
+    "read-last-lines": "^1.8.0",
+    "tail": "^2.2.6"
   },
   "devDependencies": {
     "jest": "^29.7.0"

@@ -52,6 +52,8 @@ class ProcessManager {
       absolutePath: data.fileName,
       status: "running",
       startTime: new Date(),
+      output_file: out,
+      err_file: err
     };
 
     this.handleChildProcessEvents(pid, fileName, fn);
