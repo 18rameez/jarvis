@@ -100,13 +100,33 @@ class CLIManager {
       });
 
     this.program
-        .command('logs [id|name]')
+        .command('logs <id|name>')
         .option('--lines <n>', 'output the last N lines, instead of the last 15 by default')
         .option('--out', 'only shows standard output')
         .option('--err', 'only shows error output')
         .action(this.withDaemonCheck((id,cmd) => {
           this.jarvisClient.logManager.getProcessLogs(id, cmd);
         }))
+
+    this.program
+        .command("cluster <program_path>")
+        .option(
+          "--instances <n>",
+          "number of instances, by default available core count"
+        )
+        .action(
+          this.withDaemonCheck((id, cmd) => {
+            this.jarvisClient.processManager.createCluster(id, cmd);
+          })
+        );
+
+    this.program
+        .command("show <id>")
+        .action(
+          this.withDaemonCheck((id) => {
+            this.jarvisClient.processManager.getProcessInfo(id);
+          })
+        );
 
   }
 

@@ -4,6 +4,9 @@ const path = require("path");
 const fs = require("fs");
 const getProcessUsage = require("../utils/getProcessUsage");
 const {ensureFileAndDirExistence} = require("../utils/fileUtils")
+const os = require("os"); 
+const cluster = require('cluster');
+
 class ProcessManager {
   constructor(jarvis) {
     this.jarvis = jarvis;
@@ -53,7 +56,9 @@ class ProcessManager {
       status: "running",
       startTime: new Date(),
       output_file: out,
-      err_file: err
+      err_file: err,
+      cluster: false,
+      instances: 1
     };
 
     this.handleChildProcessEvents(pid, fileName, fn);
@@ -61,12 +66,18 @@ class ProcessManager {
     // console.log("createProcess", pid, fileName, this.jarvis.processes);
   };
 
+  // processExistCheck(pathToCheck) {
+  //   return Object.values(this.jarvis.processes).some(
+  //     (entry) => entry.absolutePath === pathToCheck
+  //   );
+  // }
+
+  // Todo - might be causing issue in cluster check
   processExistCheck(pathToCheck) {
     return Object.values(this.jarvis.processes).some(
-      (entry) => entry.absolutePath === pathToCheck
+      (entry) => entry.absolutePath === pathToCheck && entry.cluster
     );
   }
-
 
   ensureLogsDirectory() {
     const logsDir = path.join(__dirname, "logs");
@@ -130,33 +141,39 @@ class ProcessManager {
 
 
   handleChildProcessEvents(pid, fileName, fn = undefined) {
-   
-    this.childProcess.on('spawn', () => {
-      if (fn) {
-        fn(null, 'process has been started');
-        console.log('process has been started successfully. PID: ', pid);
-        //To store all processes ids
-        const filePath = path.join(this.jarvis.Home_Directory, this.jarvis.pids_directory, 'pids.txt') 
-        ensureFileAndDirExistence(filePath)
-        fs.appendFileSync(filePath, `${this.childProcess.pid}\n`);
-      }
+    const processDetails = this.jarvis.processes[pid];
+    const childProcess = processDetails.instance;
+  
+    childProcess.on('spawn', () => {
+      console.log(`Process started. PID: ${pid}`);
+      if (fn) fn(null, 'Process has been started');
+  
+      // Store PID
+      const filePath = path.join(
+        this.jarvis.Home_Directory,
+        this.jarvis.pids_directory,
+        'pids.txt'
+      );
+      ensureFileAndDirExistence(filePath);
+      fs.appendFileSync(filePath, `${pid}\n`);
     });
   
-    
-    this.childProcess.on('close', () => {
-      console.log('handleClose', pid);
+    childProcess.on('close', (code, signal) => {
+      console.log(`Process closed. PID: ${pid}, Code: ${code}, Signal: ${signal}`);
+      processDetails.status = 'stopped';
     });
   
-  
-    this.childProcess.on('exit', () => {
-      console.log('handleExit', pid);
+    childProcess.on('exit', (code, signal) => {
+      console.log(`Process exited. PID: ${pid}, Code: ${code}, Signal: ${signal}`);
+      processDetails.status = 'stopped';
     });
   
-  
-    this.childProcess.on('error', () => {
-      console.log('handleError', pid);
+    childProcess.on('error', (err) => {
+      console.log(`Process error. PID: ${pid}, Error: ${err}`);
+      processDetails.status = 'error';
     });
   }
+  
   
 
   getProcessLog = (data, fn) => {
@@ -202,6 +219,89 @@ class ProcessManager {
 
     fn(null, `PID: ${data.pid} has been killed`);
   };
+
+
+  createClusterProcess = (data, fn) => {
+
+    const numCPUs = data.instances || require('os').cpus().length;
+    const scriptPath = path.resolve(data.fileName);
+
+    let isProcessAlreadyExist = this.processExistCheck(scriptPath);
+
+    if (isProcessAlreadyExist) {
+      fn(null, 'Process Already Exists');
+      return;
+    }
+
+    const fileName = path.basename(data.fileName);
+    const formattedFileName = path.basename(data.fileName, path.extname(data.fileName));
+
+    const out = path.join(
+      this.jarvis.Home_Directory,
+      this.jarvis.Logs_Directory,
+      `${formattedFileName}-cluster-out.logs`
+    );
+    const err = path.join(
+      this.jarvis.Home_Directory,
+      this.jarvis.Logs_Directory,
+      `${formattedFileName}-cluster-err.logs`
+    );
+
+    ensureFileAndDirExistence(out);
+    ensureFileAndDirExistence(err);
+
+    const outFd = fs.openSync(out, 'a');
+    const errFd = fs.openSync(err, 'a');
+
+    // Path to the cluster master script
+    const clusterMasterScript = path.join(__dirname, './cluster/clusterMaster.js');
+
+    const env = {
+      ...process.env,
+      SCRIPT_PATH: scriptPath,
+      INSTANCES: numCPUs,
+    };
+
+    const childProcess = spawn('node', [clusterMasterScript], {
+      detached: true,
+      stdio: ['ignore', outFd, errFd],
+      env: env,
+    });
+
+    const pid = childProcess.pid;
+    const id = this.processCounter++;
+
+    this.jarvis.processes[pid] = {
+      id: id,
+      pid: pid,
+      fileName: formattedFileName,
+      instance: childProcess,
+      absolutePath: scriptPath,
+      status: 'running',
+      startTime: new Date(),
+      cluster: true,
+      instances: numCPUs,
+      output_file: out,
+      err_file: err
+    };
+
+    childProcess.unref();
+
+    this.handleChildProcessEvents(pid, data.fileName, fn);
+
+    if (fn) fn(null, `Cluster of ${numCPUs} processes has been started`);
+  };
+
+  get_process_info = (data, fn) => {
+    let id = data?.id;
+    if(id){
+     id = parseInt(id)
+     const processData = this.findProcessById(id)
+     delete processData.instance
+     fn(null, processData)
+    } 
+  }
+
 }
 
 module.exports = ProcessManager;

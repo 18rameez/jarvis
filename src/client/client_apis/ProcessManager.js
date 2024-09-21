@@ -44,6 +44,32 @@ class ProcessManager {
       process.exit();
     });
   }
+
+  createCluster(fileName, cmds){
+    const filePath = path.resolve(fileName);
+    const data = { fileName: filePath, instances: cmds?.instances };
+    this.jarvisClient.call("cluster", data, (err, res) => {
+      if (err) {
+        console.error("Error while creating cluster:", err);
+        process.exit(1);
+      }
+      console.log(res);
+      process.exit();
+    });
+  }
+
+  getProcessInfo(id, cmds){
+    console.log(id);
+    const data = { id: id};
+    this.jarvisClient.call("get_process_info", data, (err, res) => {
+      if (err) {
+        console.error("Error while getting process info:", err);
+        process.exit(1);
+      }
+      console.log(res);
+      process.exit();
+    });
+  }
 }
 
 module.exports = ProcessManager

@@ -12,7 +12,8 @@
     "stop": "./bin/jarvis  stop",
     "list": "./bin/jarvis  list",
     "logs": "./bin/jarvis logs 0",
-    "test": "jest"
+    "test": "jest",
+    "cluster": "./bin/jarvis cluster ./test/test_program/program2.js  --instances 4"
   },
   "keywords": [],
   "author": "",

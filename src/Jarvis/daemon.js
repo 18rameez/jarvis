@@ -24,6 +24,8 @@ server.expose({
   stop : jarvis.jarvisHandler.stop,
   list: jarvis.processManager.getList,
   getProcessLog: jarvis.processManager.getProcessLog,
+  cluster: jarvis.processManager.createClusterProcess,
+  get_process_info: jarvis.processManager.get_process_info,
 });
 
 function killChildProcess() {
